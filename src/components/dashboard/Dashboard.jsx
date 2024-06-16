@@ -44,9 +44,6 @@ const Dashboard = () => {
             <Link to="/dashboard/new-invoice" className="menu-link">
               <NoteAddIcon /> New Invoice
             </Link>
-            <Link to="/dashboard/setting" className="menu-link">
-              <SettingsIcon /> Setting
-            </Link>
           </div>
         </div>
         <div className="main-container">
