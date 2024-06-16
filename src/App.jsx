@@ -6,7 +6,6 @@ import Dashboard from "./components/dashboard/Dashboard";
 import Home from "./components/dashboard/Home";
 import Invoices from "./components/dashboard/Invoices";
 import NewInvoice from "./components/dashboard/NewInvoice";
-import Setting from "./components/dashboard/Setting";
 import InvoiceDetail from "./components/dashboard/InvoiceDetail";
 
 function App() {
@@ -46,11 +45,7 @@ function App() {
         {
           path: "new-invoice",
           element: <NewInvoice />,
-        },
-        {
-          path: "setting",
-          element: <Setting />,
-        },
+        }
       ],
     },
   ]);

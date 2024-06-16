@@ -12,27 +12,35 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [file, setFile] = useState(null);
   const [displayName, setDisplayName] = useState("");
+  const [error, setError] = useState("");
   const [loader, setLoader] = useState(false);
   const [imageURL, setImageURL] = useState(null);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(email, password);
     setLoader(true);
-    firebase.signupUserWithEmailAndPassword(email, password).then((newUser) => {
-      firebase.uploadImage(displayName, file).then((downloadURL) => {
-        firebase.updateUserProfile(newUser, displayName, downloadURL);
-        firebase.setUserData(newUser, displayName, email, downloadURL);
-        localStorage.setItem("cName", newUser.user.displayName);
-        localStorage.setItem("logo", newUser.user.photoURL);
-        localStorage.setItem("email", newUser.user.email);
-        localStorage.setItem("uid", newUser.user.uid);
+    setError("");
+    try {
+      console.log(email, password);
+      const newUser = await firebase.signupUserWithEmailAndPassword(
+        email,
+        password
+      );
+      const downloadURL = await firebase.uploadImage(displayName, file);
+      await firebase.updateUserProfile(newUser, displayName, downloadURL);
+      await firebase.setUserData(newUser, displayName, email, downloadURL);
+      localStorage.setItem("cName", newUser.user.displayName);
+      localStorage.setItem("logo", newUser.user.photoURL);
+      localStorage.setItem("email", newUser.user.email);
+      localStorage.setItem("uid", newUser.user.uid);
 
-        setLoader(false);
-        navigate("/dashboard");
-      });
-    });
+      setLoader(false);
+      navigate("/dashboard");
+    } catch (error) {
+      setLoader(false);
+      setError(error.message);
+    }
   };
 
   const onSelectFile = (e) => {
@@ -107,6 +115,9 @@ const Register = () => {
                   )}
                 </div>
                 <input className="login-input login-btn" type="submit" />
+                {error && (
+                  <p style={{ color: "red", fontSize: "14px" }}>{error}</p>
+                )}
               </form>
               <Link to="/login" className="register-link">
                 Already have an account? Login

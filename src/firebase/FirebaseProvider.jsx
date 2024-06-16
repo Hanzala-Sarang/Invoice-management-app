@@ -47,12 +47,36 @@ const storage = getStorage();
 const db = getFirestore(app);
 
 const FirebaseProvider = ({ children }) => {
-  const signupUserWithEmailAndPassword = (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
+  const signupUserWithEmailAndPassword = async (email, password) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      return userCredential;
+    } catch (error) {
+      if (error.code === "auth/email-already-in-use") {
+        throw new Error(
+          "Email is already in use, Please register with another email"
+        );
+      }
+      throw error; // Throw other errors to be caught in the handleSubmit function
+    }
   };
 
   const signinUserWithEmailAndPassword = (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
+    try {
+      return signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      if (error.code === "auth/invalid-credential") {
+        throw new Error("Wrong Password");
+      }
+      if (error.code === "auth/user-not-found") {
+        throw new Error("User not found");
+      }
+      throw error; // Throw other errors to be caught in the handleSubmit function
+    }
   };
   const uploadImage = async (filename, file) => {
     const storageRef = ref(storage, `${filename}-${Date.now()}`);
